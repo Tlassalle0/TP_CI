@@ -2,12 +2,34 @@ name: CI starter a completer
 
 on:
   workflow_dispatch:
+  push:
+  pull_request:
 
 jobs:
-  consigne:
+  ci:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Consigne
-        run: |
-          echo "Ce workflow est volontairement minimal."
-          echo "Les etudiants doivent ajouter push, pull_request, npm ci, npm test, npm audit, npm outdated et docker compose build."
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Security audit
+        run: npm audit
+
+      - name: Check outdated dependencies
+        run: npm outdated
+
+      - name: Build Docker Compose services
+        run: docker compose build
