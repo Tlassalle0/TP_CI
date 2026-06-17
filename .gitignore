@@ -18,9 +18,10 @@ logs/
 *.pem
 *.key
 
-# Dumps PostgreSQL et sauvegardes
+# Dumps PostgreSQL et sauvegardes (on garde le dossier, pas les dumps)
 backup-*.sql
-backups/
+backups/*
+!backups/.gitkeep
 *.dump
 
 # Divers
