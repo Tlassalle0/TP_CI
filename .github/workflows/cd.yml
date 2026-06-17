@@ -1,13 +1,58 @@
-name: CD starter a completer
+name: CD
 
+# Déploiement (local et pédagogique) :
+#  - push sur develop      -> staging
+#  - tag v*                -> production (validation manuelle via GitHub Environment)
 on:
+  push:
+    branches: [develop]
+    tags: ["v*"]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  consigne:
+  deploy-staging:
+    name: Déploiement staging
+    if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
+    environment: staging
     steps:
-      - name: Consigne
+      - uses: actions/checkout@v4
+      - name: Construire la stack staging
         run: |
-          echo "Ce workflow est volontairement minimal."
-          echo "Les etudiants doivent ajouter staging, production simulee, smoke test et rollback."
+          docker compose -f docker-compose.yml -f docker-compose.staging.yml config
+          docker compose -f docker-compose.yml -f docker-compose.staging.yml build
+      - name: Déployer (staging local simulé sur le port 8081)
+        run: |
+          echo "Déploiement staging — commande de référence :"
+          echo "docker compose -p shoplite_staging -f docker-compose.yml -f docker-compose.staging.yml up -d"
+      - name: Smoke test staging
+        run: |
+          echo "BASE_URL=http://localhost:8081 ./scripts/smoke-test.sh"
+
+  deploy-production:
+    name: Déploiement production
+    # La production ne se déclenche que sur un tag versionné v*.
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    # L'environment "production" porte la protection "required reviewers"
+    # (validation manuelle configurée dans GitHub > Settings > Environments).
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Déterminer la version
+        run: echo "VERSION=${GITHUB_REF_NAME}" >> "$GITHUB_ENV"
+      - name: Construire l'image de production taguée
+        run: |
+          docker build -t shoplite-api:${VERSION} ./api
+          docker build -t shoplite-frontend:${VERSION} ./frontend
+      - name: Déployer (production locale simulée)
+        run: |
+          echo "Déploiement production version ${VERSION} — commande de référence :"
+          echo "APP_VERSION=${VERSION} docker compose up -d"
+      - name: Smoke test production
+        run: echo "./scripts/smoke-test.sh"
+      - name: Plan de rollback
+        run: echo "En cas d'échec : ./scripts/rollback.sh <version-stable-précédente>"
