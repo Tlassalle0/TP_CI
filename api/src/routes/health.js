@@ -1,12 +1,14 @@
 const express = require("express");
 const db = require("../db");
+const { version } = require("../lib/version");
 
 const router = express.Router();
 
+// Healthcheck détaillé : état de l'API, de la base, version, timestamp et uptime.
 router.get("/", async (req, res) => {
   const checks = {
     api: "ok",
-    database: "unknown"
+    database: "unknown",
   };
 
   let status = 200;
@@ -22,8 +24,10 @@ router.get("/", async (req, res) => {
   res.status(status).json({
     status: status === 200 ? "ok" : "error",
     service: "shoplite-api",
+    version,
     checks,
-    timestamp: new Date().toISOString()
+    uptime_s: Math.round(process.uptime()),
+    timestamp: new Date().toISOString(),
   });
 });
 

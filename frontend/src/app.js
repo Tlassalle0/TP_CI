@@ -36,6 +36,11 @@ async function loadHealth() {
   const data = await fetchJson("/api/health");
   healthEl.textContent = JSON.stringify(data, null, 2);
 
+  const versionEl = document.querySelector("#app-version");
+  if (versionEl && data.version) {
+    versionEl.textContent = data.version;
+  }
+
   if (data.status === "ok" && data.checks?.database === "ok") {
     setStatus("ok", "Application operationnelle", "API et PostgreSQL repondent correctement.");
     return;
@@ -64,6 +69,7 @@ async function loadProducts() {
           <h3>${product.name}</h3>
           <p>${product.description}</p>
           <span class="price">${formatPrice(product.price_cents)}</span>
+          ${product.low_stock ? '<span class="pill">Stock faible</span>' : ""}
         </article>
       `
     )
