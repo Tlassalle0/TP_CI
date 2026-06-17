@@ -5,6 +5,20 @@ Format inspiré de [Keep a Changelog](https://keepachangelog.com/fr/) — versio
 
 ## [Non publié]
 
+## [1.1.0]
+
+### Ajouté
+
+- Colonne `stock` (migration **non destructive** `ADD COLUMN IF NOT EXISTS`, valeurs par défaut).
+- Indicateur `low_stock` sur `/api/products`, calculé de façon null-safe.
+- Affichage de la version applicative et badge « Stock faible » côté frontend.
+
+### Corrigé
+
+- Régression sur `/api/products` (HTTP 500 quand `stock` est null) introduite par une
+  première tentative de v1.1.0. Incident annulé par `git revert`, puis corrigé via le
+  workflow `hotfix/products-stock`. Détail dans [`docs/INCIDENT.md`](docs/INCIDENT.md).
+
 ## [1.0.0]
 
 Première version industrialisée et stable de ShopLite.
@@ -25,5 +39,6 @@ Première version industrialisée et stable de ShopLite.
 - Documentation : README + badges, `docs/ARCHITECTURE.md`, `docs/INCIDENT.md`,
   `docs/DORA.md`, `docs/RACI.md`.
 
-[Non publié]: https://github.com/Tlassalle0/TP_CI/compare/v1.0.0...HEAD
+[Non publié]: https://github.com/Tlassalle0/TP_CI/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/Tlassalle0/TP_CI/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Tlassalle0/TP_CI/releases/tag/v1.0.0
