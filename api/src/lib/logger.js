@@ -9,7 +9,8 @@ const LEVELS = {
 };
 
 // Seuil courant lu depuis l'environnement (défaut: info).
-const currentLevel = LEVELS[(process.env.LOG_LEVEL || "info").toLowerCase()] || LEVELS.info;
+const currentLevel =
+  LEVELS[(process.env.LOG_LEVEL || "info").toLowerCase()] || LEVELS.info;
 
 // Clés sensibles à masquer dans les logs (secrets, tokens, mots de passe...).
 const SENSITIVE_KEYS = [
