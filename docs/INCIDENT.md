@@ -55,6 +55,15 @@ docker inspect shoplite_api
 4. Vérification : `./scripts/smoke-test.sh` + `npm test` (test `/api/products` repassé au vert).
 5. Contrôle des données : `SELECT count(*) FROM products;` → inchangé.
 
+### Traçabilité Git (SHAs réels)
+
+| Étape                | Commit    | Description                                              |
+| -------------------- | --------- | ------------------------------------------------------- |
+| Incident introduit   | `64c51c5` | `feat(products): low_stock (v1.1.0 candidate)` (bug)    |
+| Annulation (revert)  | `5120a3d` | `Revert "feat(products)…"` → test repassé au vert       |
+| Hotfix correctif     | `e7440c2` | `fix(products): stock null-safe + migration…` (v1.1.0)  |
+| Versions stables     | tags      | `v1.0.0` (pré-incident), `v1.1.0` (post-hotfix)         |
+
 ### Prévention
 
 - Test d'intégration `/api/products` **bloquant** en CI (matrice + PostgreSQL réel).
