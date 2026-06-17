@@ -1,8 +1,25 @@
+# Override staging.
+# Lancement isolé (volumes/réseaux préfixés par le nom de projet) :
+#   docker compose -p shoplite_staging \
+#     -f docker-compose.yml -f docker-compose.staging.yml up -d --build
+#
+# Le port HTTP staging est distinct du dev (8081 vs 8080) pour éviter les conflits.
 services:
-  api:
+  db:
+    container_name: shoplite_db_staging
     environment:
-      APP_VERSION: staging-starter
+      POSTGRES_DB: ${POSTGRES_DB:-shoplite_staging}
+
+  api:
+    container_name: shoplite_api_staging
+    environment:
+      APP_VERSION: ${APP_VERSION:-staging}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+
+  frontend:
+    container_name: shoplite_frontend_staging
 
   proxy:
+    container_name: shoplite_proxy_staging
     ports:
-      - "8081:80"
+      - "${HTTP_PORT:-8081}:80"
