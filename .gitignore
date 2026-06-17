@@ -1,13 +1,31 @@
-node_modules
+# Dépendances
+node_modules/
+
+# Variables d'environnement (ne jamais commiter les vrais secrets)
 .env
 .env.*
 !.env.example
-coverage
-dist
-logs
+
+# Tests / build
+coverage/
+dist/
+
+# Logs applicatifs et Docker
+logs/
 *.log
+
+# Clés et certificats
 *.pem
 *.key
+
+# Dumps PostgreSQL et sauvegardes
 backup-*.sql
-backups/*.sql
-tmp
+backups/
+*.dump
+
+# Divers
+tmp/
+.DS_Store
+
+# Sujet du TP (support pédagogique, hors livrable)
+tp.html
